@@ -77,9 +77,9 @@ def readGeotiff(name, reportMapSubsetError=False, pixel_subset=None, map_subset=
 		subrows[np.where(subrows > info.rows)] = info.rows
 
 	returnI = I()
-	#print(f'{x.shape=}, {subcols=}, {subrows=}')
-	returnI.x = x[int(subcols[0]-1):int(subcols[1]):]
-	returnI.y = y[int(subrows[0]-1):int(subrows[1]):]
+	#print(f'{x.shape=}, {y.shape=}, {subcols=}, {subrows=}')
+	returnI.x = x[int(subcols[0]):int(subcols[1])+1]
+	returnI.y = y[int(subrows[0]):int(subrows[1])+1]
 	returnI.z = []	
 
 	if not mapInfoOnlyFlag:
@@ -91,7 +91,7 @@ def readGeotiff(name, reportMapSubsetError=False, pixel_subset=None, map_subset=
 		returnI.z = np.array(returnI.z)
 		#print(f'c{returnI.z.shape=}')
 		#print(f'{subrows=}, {subcols=}')
-		returnI.z = returnI.z[subrows[0]:subrows[1], subcols[0]:subcols[1]]
+		returnI.z = returnI.z[subrows[0]:subrows[1]+1, subcols[0]:subcols[1]+1]
 		#print(f'd{returnI.z.shape=}')
 
 	returnI.info = info

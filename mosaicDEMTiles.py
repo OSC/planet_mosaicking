@@ -49,11 +49,11 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 
 	# Get offsets between tile on right
 	dzrt, dzrt_mad = getNeighborOffsets(fileNames, nright)
-	with open('interim.pcl', 'wb') as f:
-		pickle.dump({'dzup': dzup, 'dzup_mad': dzup_mad, 'dzrt': dzrt, 'dzrt_mad': dzrt_mad}, f)
 
 	# Adjustment
 	dZ = adjustOffsets(len(fileNames), np.concatenate((ntop[:,0], nright[:,0])).reshape(-1,1), np.concatenate((ntop[:,1], nright[:,1])).reshape(-1,1), np.concatenate((dzup, dzrt)).reshape(-1,1), np.concatenate((dzup_mad, dzrt_mad)).reshape(-1,1))
+	with open('interim.pcl', 'wb') as f:
+		pickle.dump({'dzup': dzup, 'dzup_mad': dzup_mad, 'dzrt': dzrt, 'dzrt_mad': dzrt_mad}, f)
 	sys.exit(1)
 
 	# Define Mosaic
