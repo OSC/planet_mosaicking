@@ -90,7 +90,6 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 
 	# build mosaic output array
 	z = np.full((len(y), len(x)), np.nan)
-	print(f'1{z.shape=}')
 
 	## Add DEMs with adjustments to mosaic
 
@@ -132,7 +131,6 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 
 		# add adjustment offset
 		m.z = m.z - dZ[filen]
-		#print(f'{m.z.shape=}')
 
 		# find indices of overlap between tile and mosaic
 		ncols = np.where(np.logical_and(x>=minx, x<=maxx))[0]
@@ -143,10 +141,8 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 			# if not, interpolate to mosaic grid
 			m.z = rat.interp2_gdal(m.x, m.y, m.z, x[ncols], y[nrows], 'bilinear')
 
-		#print(f'{nrows=}, {ncols}, {z.shape=}')
 		# subset area of tile from mosaic
 		zsub = z[np.meshgrid(nrows, ncols)].T
-		#print(f'{zsub.shape=}, {m.z.shape=}')
 
 		# find overlapping pixels with values between DEM and mosaic subset
 		n_overlap = np.logical_and(~np.isnan(zsub.flatten()), ~np.isnan(m.z.flatten()))
@@ -154,12 +150,10 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 		if np.any(n_overlap):
 			# if there's overlapping pixels, blend tile into mosaic with edge
 			# feathering
-			print('feathering')
 			m.z = blendTile(m.z, zsub)
 		else:
 			# if no pixels overlap, just add the subset data into the subtile,
 			# replacing the NaNs
-			print('no feathering')
 			m.z[np.logical_not(np.isnan(zsub))] = zsub[np.logical_not(np.isnan(zsub))]
 
 		# place the blended subtile into the tile
@@ -180,9 +174,6 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 		# reset count of pixels with data for next iteration:
 		subtile_n = subtile_n + 1
 
-	with open('interim.pcl', 'wb') as f:
-		pickle.dump({'m.z': m.z, 'nrows': nrows, 'ncols': ncols, 'z': z}, f)
-	sys.exit(1)
 	## Add DEMs with nan dZ adjustment values by subtracting buffer difference
 
 	# index vector of offsets with nans. We will remove these as they are added
@@ -195,7 +186,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 	# increase to the next dem and so forth, rotating back to 1 once it cycles
 	# through. If the count goes through a full cycle of 1:length(nf), the
 	# remaining nf dems will be added without registration.
-	count=1
+	count=0
 
 	# flag to indicate if that addition of all dems have failed due to lack of
 	# overlap and to add without registration.
@@ -229,11 +220,6 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 			print('subtile out of bounds, skipping')
 			continue
 
-		#if not np.any(~np.isnan(zsub['za_med'])):
-		#	nf = np.delete(nf, count)
-		#	print(f'all NaNs, skipping')
-		#	continue
-
 		m = readGeotiff(fileNames[filen], map_subset=[minx, maxx, miny, maxy])
 		m.z[m.z==-9999] = np.nan
 
@@ -242,21 +228,14 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 		nrows = np.where(np.logical_and(y>=miny, y<=maxy))[0]
 
 		# check if tile grid is same as mosaic grid
-		#print(f'{m.x.shape=}, {m.y.shape=}')
-		#print(f'a{m.x[1] - m.x[0] != dx}')
-		#print(f'b{m.y[1]-m.y[0] != -dx}')
-		#print(f'c{m.x[0] != x[ncols[0]]}')
-		#print(f'd{m.y[0] != y[nrows[0]]}')
-		#print(f'e{len(m.x) != len(ncols)}')
-		#print(f'f{len(m.y) != len(nrows)}')
 		if m.x[1] - m.x[0] != dx or m.y[1]-m.y[0] != -dx or m.x[0] != x[ncols[0]] or m.y[0] != y[nrows[0]] or len(m.x) != len(ncols) or len(m.y) != len(nrows):
 			# if not, interpolate mosaic grid
 			m.z = rat.interp2_gdal(m.x, m.y, m.z, x[ncols], y[nrows], 'bilinear')
 
-		zsub = z[np.meshgrid(nrows, ncols)]
+		zsub = z[np.meshgrid(nrows, ncols)].T
 
 		# find overlapping non-nan and non-water pixels
-		n_overlap = np.logical_and(np.logical_and(~np.isnan(zsub), ~np.isnan(m.z)))
+		n_overlap = np.logical_and(np.logical_and(~np.isnan(zsub.flatten()), ~np.isnan(m.z.flatten())))
 
 		# check if overlapping pixels exist to determine if blending is needed
 		if np.any(n_overlap):
@@ -276,7 +255,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 				continue
 
 		# place the blended subtile into the tile
-		z[np.meshgrid(nrows, ncols)] = m.z
+		z[np.meshgrid(nrows, ncols)] = m.z.T
 
 		# count the number of pixels with data after this merge
 		Nn1 = np.sum(~np.isnan(z))
@@ -292,4 +271,4 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 		# remove this subtile from index
 		nf = np.delete(nf, count)
 
-		return x, y, z
+	return x, y, z

@@ -1,3 +1,4 @@
 slurm-*
 *.pcl
+*.png
 __pycache__
