@@ -19,7 +19,6 @@ def getNeighborOffsets(fileNames, nB):
 	dz = np.full((nB.shape[0], 1), np.nan)
 	dz_mad = np.full((nB.shape[0], 1), np.nan)
 
-	fileNames = sorted(fileNames) #TMP
 	ext = [os.path.splitext(e)[1].lower() for e in fileNames]
 
 	# Get offsets between tile above

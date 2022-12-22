@@ -6,7 +6,6 @@ from readGeotiff import readGeotiff
 import pickle
 
 def findNeighborTiles(fileNames):
-	fileNames = sorted(fileNames) #TMP
 	
 	# get filename extensions for determining import function
 	ext = [os.path.splitext(e)[1].lower() for e in fileNames]

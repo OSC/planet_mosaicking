@@ -49,7 +49,6 @@ def blendTile(z, zsub):
 
 def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 	
-	fileNames = sorted(fileNames) #TMP
 	# find neighbors
 	ntop, nright, _, _, X = findNeighborTiles(fileNames)
 
