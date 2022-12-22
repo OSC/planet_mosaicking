@@ -58,7 +58,7 @@ def getNeighborOffsets(fileNames, nB):
 		elif ext[nB[n,0]] == '.tif':
 			#print(f'{cols0=}, {rows0=}')
 			#print(f'{[cols0[0], cols0[-1]+1, rows0[-1], rows0[0]+1]=}')
-			z0 = readGeotiff(fileNames[nB[n,0]], pixel_subset=[cols0[0], cols0[-1]+1, rows0[-1], rows0[0]+1])
+			z0 = readGeotiff(fileNames[nB[n,0]], pixel_subset=[cols0[0], cols0[-1], rows0[-1], rows0[0]])
 			#print(f'{z0.x=}, {z0.y=}, {z0.z=}')
 			#print(f'{z0.y.shape=}, {z0.x.shape=}')
 			x0 = z0.x
@@ -73,7 +73,7 @@ def getNeighborOffsets(fileNames, nB):
 			z1 = m1.z[rows1,cols1]
 		elif ext[nB[n,1]] == '.tif':
 			#print(f'{[cols1[0], cols1[-1]+1, rows1[-1], rows1[0]+1]=}')
-			z1 = readGeotiff(fileNames[nB[n,1]], pixel_subset=[cols1[0], cols1[-1]+1, rows1[-1], rows1[0]+1])
+			z1 = readGeotiff(fileNames[nB[n,1]], pixel_subset=[cols1[0], cols1[-1], rows1[-1], rows1[0]])
 			#print(f'{z1.y.shape=}, {z1.x.shape=}')
 			x1 = z1.x
 			y1 = z1.y
