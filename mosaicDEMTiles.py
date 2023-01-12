@@ -234,7 +234,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 		zsub = z[np.meshgrid(nrows, ncols)].T
 
 		# find overlapping non-nan and non-water pixels
-		n_overlap = np.logical_and(np.logical_and(~np.isnan(zsub.flatten()), ~np.isnan(m.z.flatten())))
+		n_overlap = np.logical_and(~np.isnan(zsub), ~np.isnan(m.z))
 
 		# check if overlapping pixels exist to determine if blending is needed
 		if np.any(n_overlap):
