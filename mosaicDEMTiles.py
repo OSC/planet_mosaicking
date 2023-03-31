@@ -1,6 +1,6 @@
 import sys
 import pickle
-from osgeo import ogr
+from gdal import ogr
 from findNeighborTiles import findNeighborTiles
 from readGeotiff import readGeotiff
 from getNeighborOffsets import getNeighborOffsets
@@ -41,9 +41,6 @@ def blendTile(z, zsub):
 	# blend the subtile and mosaic subset, applying the edge-distance
 	# weighting
 	z[notMissing] = z[notMissing] * buffA[notMissing] + zsub[notMissing]*(1-buffA[notMissing])
-	#with open('blending.pcl', 'wb') as f:
-	#	pickle.dump({'z': z, 'buffA': buffA, 'notMissing': notMissing, 'zsub': zsub}, f)
-	#sys.exit(1)
 
 	return z
 
@@ -141,7 +138,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 			m.z = rat.interp2_gdal(m.x, m.y, m.z, x[ncols], y[nrows], 'bilinear')
 
 		# subset area of tile from mosaic
-		zsub = z[np.meshgrid(nrows, ncols)].T
+		zsub = z[tuple(np.meshgrid(nrows, ncols))].T
 
 		# find overlapping pixels with values between DEM and mosaic subset
 		n_overlap = np.logical_and(~np.isnan(zsub.flatten()), ~np.isnan(m.z.flatten()))
@@ -156,7 +153,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 			m.z[np.logical_not(np.isnan(zsub))] = zsub[np.logical_not(np.isnan(zsub))]
 
 		# place the blended subtile into the tile
-		z[np.meshgrid(nrows, ncols)] = m.z.T
+		z[tuple(np.meshgrid(nrows, ncols))] = m.z.T
 		#with open('interim.pcl', 'wb') as f:
 		#	pickle.dump({'z': z}, f)
 
@@ -231,7 +228,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 			# if not, interpolate mosaic grid
 			m.z = rat.interp2_gdal(m.x, m.y, m.z, x[ncols], y[nrows], 'bilinear')
 
-		zsub = z[np.meshgrid(nrows, ncols)].T
+		zsub = z[tuple(np.meshgrid(nrows, ncols))].T
 
 		# find overlapping non-nan and non-water pixels
 		n_overlap = np.logical_and(~np.isnan(zsub), ~np.isnan(m.z))
@@ -254,7 +251,7 @@ def mosaicDEMTiles(fileNames, dx=None, extent=[]):
 				continue
 
 		# place the blended subtile into the tile
-		z[np.meshgrid(nrows, ncols)] = m.z.T
+		z[tuple(np.meshgrid(nrows, ncols))] = m.z.T
 
 		# count the number of pixels with data after this merge
 		Nn1 = np.sum(~np.isnan(z))
