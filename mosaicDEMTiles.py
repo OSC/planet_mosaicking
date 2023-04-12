@@ -1,6 +1,6 @@
 import sys
 import pickle
-from gdal import ogr
+from osgeo import ogr
 from findNeighborTiles import findNeighborTiles
 from readGeotiff import readGeotiff
 from getNeighborOffsets import getNeighborOffsets
