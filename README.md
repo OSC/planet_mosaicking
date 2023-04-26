@@ -1,6 +1,6 @@
 # Python mosaicking for Planet data
 
-This code is largely ported from [MATLAB code written by Ian Howat](https://github.com/ihowat/setsm_postprocessing "setsm_postprocessing on GitHub"), glaciologist and professor of Earth Sciences at The Ohio State University (OSU). Some helper functions were copied from [Python code for postprocessing setsm by PGC](https://github.com/PolarGeospatialCenter/setsm_postprocessing_python).
+This code is largely ported from [MATLAB code written by Ian Howat](https://github.com/ihowat/setsm_postprocessing "setsm_postprocessing on GitHub"), glaciologist and professor of Earth Sciences at The Ohio State University (OSU). Some helper functions were copied from [Python code for postprocessing SETSM by PGC](https://github.com/PolarGeospatialCenter/setsm_postprocessing_python).
 
 ## Python requirements
 Scripts in this repo are intended to work with Python 3.9+. 
